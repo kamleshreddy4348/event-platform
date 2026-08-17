@@ -1,0 +1,146 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--parchment);
+  padding: 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 1px 2px rgba(27, 35, 51, 0.04);
+}
+
+.auth-card__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-bottom: 8px;
+}
+
+.auth-card__title {
+  font-size: 24px;
+  margin-bottom: 24px;
+}
+
+.auth-card__body {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--slate);
+  margin: -8px 0 20px;
+}
+
+.auth-forgot-link {
+  text-align: right;
+  margin: -8px 0 20px;
+  font-size: 13px;
+}
+
+.auth-forgot-link a {
+  color: var(--slate);
+  text-decoration: underline;
+}
+
+.auth-forgot-link a:hover {
+  color: var(--ink);
+}
+
+.auth-card__error {
+  background: var(--pending-bg);
+  color: var(--pending);
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--slate);
+}
+
+.auth-field input,
+.auth-field select {
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.auth-field input:focus-visible,
+.auth-field select:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 0;
+}
+
+.auth-submit {
+  width: 100%;
+  height: 42px;
+  background: var(--ink);
+  color: var(--brass-soft);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.auth-submit:hover {
+  background: var(--ink-soft);
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-card__footer {
+  text-align: center;
+  font-size: 13px;
+  color: var(--slate);
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
+.auth-card__footer a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* Mobile responsiveness — tighten padding and sizing on small screens */
+@media (max-width: 420px) {
+  .auth-page {
+    padding: 16px;
+  }
+
+  .auth-card {
+    padding: 24px 20px;
+  }
+
+  .auth-card__title {
+    font-size: 21px;
+  }
+
+  .auth-field input,
+  .auth-field select,
+  .auth-submit {
+    height: 44px; /* slightly larger tap targets on touch screens */
+  }
+}

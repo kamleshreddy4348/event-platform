@@ -1,0 +1,249 @@
+{
+  "info": {
+    "name": "Eventry API",
+    "description": "Auth + Events endpoints for the Event Management Platform. Import this whole file into Postman (File > Import), then set the 'base_url' variable if needed. Run requests top to bottom on a fresh database for the smoothest experience.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000/api" },
+    { "key": "admin_token", "value": "" },
+    { "key": "attendee_token", "value": "" },
+    { "key": "event_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.token) { pm.collectionVariables.set('admin_token', data.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin1\",\n  \"email\": \"admin1@example.com\",\n  \"password\": \"AdminPass123\",\n  \"role\": \"ADMIN\"\n}"
+            },
+            "url": "{{base_url}}/auth/register/"
+          }
+        },
+        {
+          "name": "Register Attendee",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.token) { pm.collectionVariables.set('attendee_token', data.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"attendee1\",\n  \"email\": \"attendee1@example.com\",\n  \"password\": \"AttendeePass123\",\n  \"role\": \"ATTENDEE\"\n}"
+            },
+            "url": "{{base_url}}/auth/register/"
+          }
+        },
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.token) { pm.collectionVariables.set('admin_token', data.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin1\",\n  \"password\": \"AdminPass123\"\n}"
+            },
+            "url": "{{base_url}}/auth/login/"
+          }
+        },
+        {
+          "name": "Me (whoami)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{admin_token}}" }],
+            "url": "{{base_url}}/auth/me/"
+          }
+        },
+        {
+          "name": "Request Password Reset",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin1@example.com\"\n}"
+            },
+            "url": "{{base_url}}/auth/password-reset/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "Create Event (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.id) { pm.collectionVariables.set('event_id', data.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Autumn Conference\",\n  \"description\": \"A great conference\",\n  \"date\": \"2026-09-15\",\n  \"time\": \"09:00:00\",\n  \"location\": \"Chicago, IL\"\n}"
+            },
+            "url": "{{base_url}}/events/"
+          }
+        },
+        {
+          "name": "Create Event as Attendee (expect 403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{attendee_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Should fail\",\n  \"date\": \"2026-09-15\",\n  \"time\": \"09:00:00\",\n  \"location\": \"Nowhere\"\n}"
+            },
+            "url": "{{base_url}}/events/"
+          }
+        },
+        {
+          "name": "List Events",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{attendee_token}}" }],
+            "url": "{{base_url}}/events/"
+          }
+        },
+        {
+          "name": "List Events - Filter by location",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{attendee_token}}" }],
+            "url": "{{base_url}}/events/?location=Chicago"
+          }
+        },
+        {
+          "name": "List Events - Upcoming only",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{attendee_token}}" }],
+            "url": "{{base_url}}/events/?upcoming=true"
+          }
+        },
+        {
+          "name": "Get Event Detail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{attendee_token}}" }],
+            "url": "{{base_url}}/events/{{event_id}}/"
+          }
+        },
+        {
+          "name": "RSVP to Event (Attendee)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{attendee_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"GOING\"\n}"
+            },
+            "url": "{{base_url}}/events/{{event_id}}/rsvp/"
+          }
+        },
+        {
+          "name": "View Guest List (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{admin_token}}" }],
+            "url": "{{base_url}}/events/{{event_id}}/guest_list/"
+          }
+        },
+        {
+          "name": "View Guest List as Attendee (expect 403)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{attendee_token}}" }],
+            "url": "{{base_url}}/events/{{event_id}}/guest_list/"
+          }
+        },
+        {
+          "name": "Cancel RSVP",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Token {{attendee_token}}" }],
+            "url": "{{base_url}}/events/{{event_id}}/rsvp/"
+          }
+        },
+        {
+          "name": "Update Event (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Autumn Conference (Updated)\",\n  \"description\": \"A great conference, now even better\",\n  \"date\": \"2026-09-16\",\n  \"time\": \"10:00:00\",\n  \"location\": \"Chicago, IL\"\n}"
+            },
+            "url": "{{base_url}}/events/{{event_id}}/"
+          }
+        },
+        {
+          "name": "Delete Event (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Token {{admin_token}}" }],
+            "url": "{{base_url}}/events/{{event_id}}/"
+          }
+        }
+      ]
+    }
+  ]
+}

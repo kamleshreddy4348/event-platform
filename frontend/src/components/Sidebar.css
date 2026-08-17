@@ -1,0 +1,98 @@
+.app-sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--ink);
+  color: var(--parchment);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 12px;
+  gap: 2px;
+}
+
+.app-sidebar__link {
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--slate-100);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.app-sidebar__link:hover {
+  background: var(--ink-soft);
+  color: var(--paper);
+}
+
+.app-sidebar__link.is-active {
+  background: var(--ink-soft);
+  color: var(--brass-soft);
+  position: relative;
+}
+
+.app-sidebar__link.is-active::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  background: var(--brass);
+  border-radius: 2px;
+}
+
+/* Signature: a perforated tear-line, like the stub separator on a paper ticket */
+.app-sidebar__stub {
+  position: relative;
+  margin-top: auto;
+  height: 1px;
+  background-image: radial-gradient(
+    circle,
+    var(--paper) 1.5px,
+    transparent 1.5px
+  );
+  background-size: 10px 1px;
+  background-repeat: repeat-x;
+  background-position: 12px center;
+  opacity: 0.35;
+}
+
+.app-sidebar__footer {
+  padding: 16px 20px 22px;
+}
+
+.app-sidebar__event-code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--brass-soft);
+  letter-spacing: 0.03em;
+}
+
+.app-sidebar__footer-label {
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--slate-100);
+}
+
+@media (max-width: 900px) {
+  .app-sidebar {
+    width: 72px;
+  }
+  .app-sidebar__link {
+    font-size: 0;
+    padding: 12px;
+    text-align: center;
+  }
+  .app-sidebar__link::first-letter {
+    font-size: 14px;
+  }
+  .app-sidebar__footer {
+    display: none;
+  }
+}
