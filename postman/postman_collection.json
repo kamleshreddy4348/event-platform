@@ -1,0 +1,294 @@
+{
+  "info": {
+    "name": "EventHub API",
+    "_postman_id": "eventhub-api-collection",
+    "description": "Auth, Events, RSVPs, and Guest List endpoints for the EventHub app. Set base_url and run 'Register' or 'Login' first \u2014 the token auto-saves to {{token}} for every other request.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000/api" },
+    { "key": "token", "value": "" },
+    { "key": "event_id", "value": "" },
+    { "key": "reset_uid", "value": "" },
+    { "key": "reset_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"alice\",\n  \"email\": \"alice@example.com\",\n  \"password\": \"SuperSecret123!\",\n  \"role\": \"admin\"\n}" },
+            "url": "{{base_url}}/auth/register/"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "if (pm.response.code === 201) { pm.collectionVariables.set('token', pm.response.json().token); }"
+          ] } }]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"alice\",\n  \"password\": \"SuperSecret123!\"\n}" },
+            "url": "{{base_url}}/auth/login/"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "if (pm.response.code === 200) { pm.collectionVariables.set('token', pm.response.json().token); }"
+          ] } }]
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/auth/me/"
+          }
+        },
+        {
+          "name": "Password Reset Request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"alice@example.com\"\n}" },
+            "url": "{{base_url}}/auth/password-reset/"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "if (pm.response.code === 200) { const b = pm.response.json(); pm.collectionVariables.set('reset_uid', b.uid); pm.collectionVariables.set('reset_token', b.token); }"
+          ] } }]
+        },
+        {
+          "name": "Password Reset Confirm",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"uid\": \"{{reset_uid}}\",\n  \"token\": \"{{reset_token}}\",\n  \"new_password\": \"NewSuperSecret456!\"\n}" },
+            "url": "{{base_url}}/auth/password-reset-confirm/"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/auth/logout/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "List Events",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/events/"
+          }
+        },
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"React Meetup\",\n  \"description\": \"Learn React basics\",\n  \"date\": \"2026-09-15T18:00:00Z\",\n  \"location\": \"Chennai\",\n  \"capacity\": 50\n}" },
+            "url": "{{base_url}}/events/"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "if (pm.response.code === 201) { pm.collectionVariables.set('event_id', pm.response.json().id); }"
+          ] } }]
+        },
+        {
+          "name": "Retrieve Event",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/events/{{event_id}}/"
+          }
+        },
+        {
+          "name": "Update Event",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"location\": \"Bengaluru\"\n}" },
+            "url": "{{base_url}}/events/{{event_id}}/"
+          }
+        },
+        {
+          "name": "Filter Events by Location",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/events/?location=Chennai"
+          }
+        },
+        {
+          "name": "Filter Events by Date Range",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/events/?date_after=2026-01-01T00:00:00Z&date_before=2026-12-31T00:00:00Z"
+          }
+        },
+        {
+          "name": "Delete Event",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/events/{{event_id}}/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "RSVPs",
+      "item": [
+        {
+          "name": "Create RSVP",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"event\": {{event_id}},\n  \"status\": \"going\"\n}" },
+            "url": "{{base_url}}/rsvps/"
+          }
+        },
+        {
+          "name": "List My RSVPs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/rsvps/"
+          }
+        },
+        {
+          "name": "List RSVPs for an Event (organizer)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/rsvps/?event={{event_id}}"
+          }
+        },
+        {
+          "name": "Update RSVP Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"maybe\"\n}" },
+            "url": "{{base_url}}/rsvps/1/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Guests",
+      "item": [
+        {
+          "name": "Add Guest",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"event\": {{event_id}},\n  \"name\": \"Carol\",\n  \"email\": \"carol@example.com\",\n  \"plus_ones\": 1\n}" },
+            "url": "{{base_url}}/guests/"
+          }
+        },
+        {
+          "name": "List Guests for Event",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/guests/?event={{event_id}}"
+          }
+        },
+        {
+          "name": "Event with Nested Guest List",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/guests/by-event/{{event_id}}/"
+          }
+        },
+        {
+          "name": "Update Guest Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"confirmed\"\n}" },
+            "url": "{{base_url}}/guests/1/"
+          }
+        },
+        {
+          "name": "Delete Guest",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/guests/1/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/notifications/"
+          }
+        },
+        {
+          "name": "Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/notifications/unread-count/"
+          }
+        },
+        {
+          "name": "Mark One Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"read\": true\n}" },
+            "url": "{{base_url}}/notifications/1/"
+          }
+        },
+        {
+          "name": "Mark All Read",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Token {{token}}" }],
+            "url": "{{base_url}}/notifications/mark-all-read/"
+          }
+        }
+      ]
+    }
+  ]
+}
