@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-2wg!r5b3j*sgh5z#mjrh=9-dv9ztz86*kh#cb-x7-ic5@$=k&0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -152,6 +152,9 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@eventhub.loca
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://127.0.0.1:5173')
 
 CORS_ALLOWED_ORIGINS = [
+    'http://eventhub-alb-2052791812.us-east-1.elb.amazonaws.com',
+    'http://54.174.69.62',
+    'http://32.197.61.49',
     'http://localhost:5173',
     'http://127.0.0.1:5173',
 ]
@@ -194,3 +197,5 @@ else:
             'BACKEND': 'django.core.mail.backends.console.EmailBackend',
         },
     }
+
+# CI/CD test trigger - 09/02/2026 16:59:26
