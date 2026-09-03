@@ -35,7 +35,7 @@ jobs:
 
   deploy-frontend:
     runs-on: ubuntu-latest
-      if: contains(join(github.event.head_commit.added, ','), 'frontend/') || contains(join(github.event.head_commit.modified, ','), 'frontend/')
+    if: contains(join(github.event.head_commit.added, ','), 'frontend/') || contains(join(github.event.head_commit.modified, ','), 'frontend/')
     steps:
       - uses: actions/checkout@v4
 
