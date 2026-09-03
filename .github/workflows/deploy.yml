@@ -21,10 +21,15 @@ jobs:
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-      - name: Build, tag, and push backend image
-        working-directory: backend
+            - name: Create .env file
+        working-directory: frontend
         run: |
-          docker build -t event-backend .
+          echo "VITE_API_URL=http://eventhub-alb-2052791812.us-east-1.elb.amazonaws.com:8000/api" > .env
+
+      - name: Build, tag, and push frontend image
+        working-directory: frontend
+        run: |
+          docker build -t event-frontend .
           docker tag event-backend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/event-backend:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/event-backend:latest
 
